@@ -1,20 +1,56 @@
-import { redirect } from "next/navigation";
-import { typeJob } from "../../../types/job";
+"use client"
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { typeJob } from '../../../types/job';
 
-type JobDetailsProps = {
-  job: typeJob;
-};
+const JobDetails = () => {
+  const router = useRouter();
+  const params = useParams<{id: string; item:string}>();
+  if (!params) {
+    // Handle the case where params are null or undefined
+    console.error('Params are not available');
+    return <div>Error: Unable to retrieve parameters.</div>;
+  }
+  const id = params.id;
+  const [job, setJob] = useState<typeJob | null>(null);
+  const [loading, setLoading] = useState(true);
 
-const JobDetails = ({ job }: JobDetailsProps) => {
-  if (!job) {
+  useEffect(() => {
+    if (id) {
+      fetchJobDetails(id as string);
+    }
+  }, [id]);
+
+  const fetchJobDetails = async (jobId: string) => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/jobs/${jobId}`);
+      if (res.ok) {
+        const data: typeJob = await res.json();
+        setJob(data);
+      } else {
+        setJob(null);
+      }
+    } catch (error) {
+      console.error('Error fetching job details:', error);
+      setJob(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (!job) {
+    return <div>Job not found</div>;
   }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <button
         onClick={() => {
-          redirect("/");
+          router.back();
         }}
         className="mb-6 text-blue-600 hover:text-blue-800"
       >
@@ -84,6 +120,5 @@ const JobDetails = ({ job }: JobDetailsProps) => {
   );
 };
 
-// Replace getStaticPaths and getStaticProps with getServerSideProps
-
 export default JobDetails;
+

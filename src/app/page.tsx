@@ -1,31 +1,38 @@
 "use client";
-import { useState, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
 import { typeJob, typeFilterValues } from "../types/job";
 import JobList from "../components/JobList";
 
-type typeHomeProps = {
-  initialJobs: typeJob[];
-};
-
-async function getInitialJobs() {
-  const res = await axios.get("http://localhost:3000/api/jobs"); // Replace with real API call
-  return res.data;
-}
-
-const Home = ({ initialJobs }: typeHomeProps) => {
-  const [jobs, setJobs] = useState<typeJob[]>(getInitialJobs());
+const Home = () => {
+  const [jobs, setJobs] = useState<typeJob[]>([]);
   const [filters, setFilters] = useState<typeFilterValues>({
     location: "",
     jobType: "",
     company: "",
   });
 
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/jobs"); // Replace with real API call
+        setJobs(response.data);
+      } catch (error) {
+        console.error("Error fetching initial jobs:", error);
+      }
+    };
+    fetchJobs();
+  }, []);
+
   const handleSearch = async () => {
     const { location, jobType, company } = filters;
     const query = `?location=${location}&jobType=${jobType}&company=${company}`;
-    const response = await axios.get(`/api/jobs${query}`);
-    setJobs(response.data);
+    try {
+      const response = await axios.get(`/api/jobs${query}`);
+      setJobs(response.data);
+    } catch (error) {
+      console.error("Error fetching filtered jobs:", error);
+    }
   };
 
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -89,11 +96,5 @@ const Home = ({ initialJobs }: typeHomeProps) => {
     </div>
   );
 };
-
-export async function getServerSideProps() {
-  const res = await axios.get("http://localhost:3000/api/jobs"); // Replace with real API call
-  const initialJobs: typeJob[] = res.data;
-  return { props: { initialJobs } };
-}
 
 export default Home;

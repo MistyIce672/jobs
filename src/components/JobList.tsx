@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { typeJob } from "../types/job";
 
 type typeJobListProps = {
@@ -14,7 +15,7 @@ const JobList = ({ jobs }: typeJobListProps) => {
           <div
             key={job.id}
             className="p-6 hover:bg-gray-50 transition-colors duration-200"
-          >
+          ><Link href={`/jobs/${job.id}`}>
             <div className="flex flex-col md:flex-row md:justify-between md:items-start">
               <div className="flex-grow">
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">
@@ -73,6 +74,7 @@ const JobList = ({ jobs }: typeJobListProps) => {
                 </button>
               </div>
             </div>
+            </Link>
           </div>
         ))
       )}
