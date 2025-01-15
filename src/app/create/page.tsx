@@ -1,5 +1,8 @@
-"use server";
-import axios from "axios";
+"use client";
+import { useForm } from "react-hook-form";
+import { useAction } from "next-safe-action/hooks";
+import { createJob } from "../actions/actions";
+import { formInput } from "@/schema/schema";
 
 interface IJobFormInputs {
   title: string;
@@ -11,13 +14,16 @@ interface IJobFormInputs {
   requirements: string;
 }
 
-export default async function CreateJobForm () {
+const CreateJobForm = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<formInput>();
 
-  async function createJob(formData:FormData) {
-    "use server";
+  const {execute,result,isExecuting} = useAction(createJob)
 
-    
-  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
@@ -27,7 +33,7 @@ export default async function CreateJobForm () {
         </h1>
 
         <form
-        action={createJob}
+          onSubmit={handleSubmit(execute)}
           className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
         >
           <div className="mb-6">
@@ -35,10 +41,15 @@ export default async function CreateJobForm () {
               Job Title*
             </label>
             <input
-            name="title"
+              {...register("title", { required: "Job title is required" })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="e.g. Senior Software Engineer"
             />
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.title.message}
+              </p>
+            )}
           </div>
 
           <div className="mb-6">
@@ -46,10 +57,15 @@ export default async function CreateJobForm () {
               Company Name*
             </label>
             <input
-              name="company"
+              {...register("company", { required: "Company name is required" })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="e.g. Tech Corp Inc."
             />
+            {errors.company && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.company.message}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -58,10 +74,15 @@ export default async function CreateJobForm () {
                 Location*
               </label>
               <input
-                name="location"
+                {...register("location", { required: "Location is required" })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g. New York, NY"
               />
+              {errors.location && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.location.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -69,10 +90,15 @@ export default async function CreateJobForm () {
                 Job Type*
               </label>
               <input
-                name="jobType"
+                {...register("jobType", { required: "Job type is required" })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g. Full-time"
               />
+              {errors.jobType && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.jobType.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -81,7 +107,7 @@ export default async function CreateJobForm () {
               Salary
             </label>
             <input
-              name="salary"
+              {...register("salary")}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="e.g. $100,000 - $130,000"
             />
@@ -92,11 +118,18 @@ export default async function CreateJobForm () {
               Job Description*
             </label>
             <textarea
-              name="description"
+              {...register("description", {
+                required: "Job description is required",
+              })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               rows={4}
               placeholder="Enter job description..."
             />
+            {errors.description && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.description.message}
+              </p>
+            )}
           </div>
 
           <div className="mb-6">
@@ -104,20 +137,26 @@ export default async function CreateJobForm () {
               Requirements*
             </label>
             <textarea
-              name="requirements"
+              {...register("requirements", {
+                required: "Job requirements are required",
+              })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               rows={4}
               placeholder="Enter job requirements..."
             />
+            {errors.requirements && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.requirements.message}
+              </p>
+            )}
           </div>
-
 
           <div className="flex items-center justify-end">
             <button
               type="submit"
               className="bg-blue-600 text-white font-medium py-2 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50"
             >
-              {"Create Job Posting"}
+              {isExecuting ? "Creating..." : "Create Job Posting"}
             </button>
           </div>
         </form>
@@ -125,3 +164,5 @@ export default async function CreateJobForm () {
     </div>
   );
 };
+
+export default CreateJobForm;
