@@ -1,5 +1,6 @@
 "use client"
 
+import { DialogTitle } from "@radix-ui/react-dialog"
 import {
     Dialog,
     DialogOverlay,
@@ -22,6 +23,7 @@ export function Modal({
         <Dialog defaultOpen={true} open={true} onOpenChange={handleOpenChange}>
             <DialogOverlay>
                 <DialogContent className="overflow-y-hidden">
+                <DialogTitle></DialogTitle>
                     {children}
                 </DialogContent>
             </DialogOverlay>

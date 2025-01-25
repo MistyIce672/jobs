@@ -14,6 +14,12 @@ export async function getJobByIdold(jobId: string) {
   const response = await fetch(`http://localhost:3000/api/jobs/${jobId}`);
   return response.json();
 }
+
+export async function getJobListings() {
+  const response = await fetch(`http://localhost:3000/api/jobs`);
+  return response.json();
+}
+
 export const getJobById = actionClient
     .schema(schema)
     .action(async ({ parsedInput: { jobId } }) => {

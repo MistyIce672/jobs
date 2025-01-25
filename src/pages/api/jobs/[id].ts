@@ -26,6 +26,14 @@ const mockJobs: typeJob[] = [
     jobType: 'Contract',
     description: 'Build user interfaces for web applications.',
   },
+  {
+    id: '4',
+    title: 'Frontend Developer',
+    company: 'Company A',
+    location: 'New York NY',
+    jobType: 'Full-time',
+    description: 'Build user interfaces for web applications.',
+  },
 ];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
